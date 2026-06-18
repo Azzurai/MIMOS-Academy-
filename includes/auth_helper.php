@@ -158,7 +158,7 @@ function isRateLimited($email = null) {
     $window = date('Y-m-d H:i:s', time() - RATE_LIMIT_WINDOW);
 
     // IP Check
-    $stmt = $pdo->prepare("SELECT COUNT(*) as attempts FROM login_attempts WHERE ip_address = :ip AND attempted_at > :window AND success = 0");
+    $stmt = $pdo->prepare("SELECT COUNT(*) as attempts FROM mimos_login_attempts WHERE ip_address = :ip AND attempted_at > :window AND success = 0");
     $stmt->execute([':ip' => $ip, ':window' => $window]);
     $result = $stmt->fetch();
     if ($result['attempts'] >= RATE_LIMIT_ATTEMPTS) {
@@ -167,7 +167,7 @@ function isRateLimited($email = null) {
 
     // Email Check
     if ($email) {
-        $stmt = $pdo->prepare("SELECT COUNT(*) as attempts FROM login_attempts WHERE email = :email AND attempted_at > :window AND success = 0");
+        $stmt = $pdo->prepare("SELECT COUNT(*) as attempts FROM mimos_login_attempts WHERE email = :email AND attempted_at > :window AND success = 0");
         $stmt->execute([':email' => $email, ':window' => $window]);
         $result = $stmt->fetch();
         if ($result['attempts'] >= RATE_LIMIT_ATTEMPTS) {
@@ -179,7 +179,7 @@ function isRateLimited($email = null) {
 
 function recordLoginAttempt($email, $success = false) {
     $pdo = getDBConnection();
-    $stmt = $pdo->prepare("INSERT INTO login_attempts (ip_address, email, success) VALUES (:ip, :email, :success)");
+    $stmt = $pdo->prepare("INSERT INTO mimos_login_attempts (ip_address, email, success) VALUES (:ip, :email, :success)");
     $stmt->execute([
         ':ip'      => getClientIP(),
         ':email'   => $email,
@@ -190,7 +190,7 @@ function recordLoginAttempt($email, $success = false) {
 function cleanupLoginAttempts() {
     $pdo = getDBConnection();
     $cutoff = date('Y-m-d H:i:s', time() - (RATE_LIMIT_WINDOW * 2));
-    $stmt = $pdo->prepare("DELETE FROM login_attempts WHERE attempted_at < :cutoff");
+    $stmt = $pdo->prepare("DELETE FROM mimos_login_attempts WHERE attempted_at < :cutoff");
     $stmt->execute([':cutoff' => $cutoff]);
 }
 

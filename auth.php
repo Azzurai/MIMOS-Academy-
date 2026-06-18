@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $pdo = getDBConnection();
-        $stmt = $pdo->prepare("SELECT id, full_name, email, password_hash, avatar_url, is_active FROM users WHERE email = :email LIMIT 1");
+        $stmt = $pdo->prepare("SELECT id, full_name, email, password_hash, avatar_url, is_active FROM mimos_users WHERE email = :email LIMIT 1");
         $stmt->execute([':email' => $email]);
         $user = $stmt->fetch();
 
@@ -93,7 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $pdo = getDBConnection();
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE email = :email LIMIT 1");
+        $stmt = $pdo->prepare("SELECT id FROM mimos_users WHERE email = :email LIMIT 1");
         $stmt->execute([':email' => $email]);
 
         if ($stmt->fetch()) {
@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $passwordHash = hashPassword($password);
-        $stmt = $pdo->prepare("INSERT INTO users (full_name, email, password_hash) VALUES (:name, :email, :password)");
+        $stmt = $pdo->prepare("INSERT INTO mimos_users (full_name, email, password_hash) VALUES (:name, :email, :password)");
 
         try {
             $stmt->execute([
@@ -141,7 +141,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $pdo = getDBConnection();
-        $stmt = $pdo->prepare("SELECT id, full_name FROM users WHERE email = :email AND is_active = 1 LIMIT 1");
+        $stmt = $pdo->prepare("SELECT id, full_name FROM mimos_users WHERE email = :email AND is_active = 1 LIMIT 1");
         $stmt->execute([':email' => $email]);
         $user = $stmt->fetch();
 
@@ -156,7 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $token = generateToken(32);
         $expiry = date('Y-m-d H:i:s', time() + 3600);
 
-        $stmt = $pdo->prepare("UPDATE users SET reset_token = :token, reset_token_expiry = :expiry WHERE id = :id");
+        $stmt = $pdo->prepare("UPDATE mimos_users SET reset_token = :token, reset_token_expiry = :expiry WHERE id = :id");
         $stmt->execute([
             ':token'  => $token,
             ':expiry' => $expiry,
@@ -203,7 +203,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $pdo = getDBConnection();
-        $stmt = $pdo->prepare("SELECT id, email FROM users WHERE reset_token = :token AND reset_token_expiry > NOW() AND is_active = 1 LIMIT 1");
+        $stmt = $pdo->prepare("SELECT id, email FROM mimos_users WHERE reset_token = :token AND reset_token_expiry > NOW() AND is_active = 1 LIMIT 1");
         $stmt->execute([':token' => $token]);
         $user = $stmt->fetch();
 
@@ -212,7 +212,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $passwordHash = hashPassword($password);
-        $stmt = $pdo->prepare("UPDATE users SET password_hash = :password, reset_token = NULL, reset_token_expiry = NULL WHERE id = :id");
+        $stmt = $pdo->prepare("UPDATE mimos_users SET password_hash = :password, reset_token = NULL, reset_token_expiry = NULL WHERE id = :id");
         $stmt->execute([
             ':password' => $passwordHash,
             ':id'       => $user['id'],
@@ -381,21 +381,21 @@ if ($action === 'google-callback') {
     }
 
     $pdo = getDBConnection();
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE google_id = :gid LIMIT 1");
+    $stmt = $pdo->prepare("SELECT * FROM mimos_users WHERE google_id = :gid LIMIT 1");
     $stmt->execute([':gid' => $googleId]);
     $user = $stmt->fetch();
 
     if (!$user) {
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email LIMIT 1");
+        $stmt = $pdo->prepare("SELECT * FROM mimos_users WHERE email = :email LIMIT 1");
         $stmt->execute([':email' => $googleEmail]);
         $user = $stmt->fetch();
 
         if ($user) {
-            $stmt = $pdo->prepare("UPDATE users SET google_id = :gid, avatar_url = :avatar WHERE id = :id");
+            $stmt = $pdo->prepare("UPDATE mimos_users SET google_id = :gid, avatar_url = :avatar WHERE id = :id");
             $stmt->execute([':gid' => $googleId, ':avatar' => $googleAvatar, ':id' => $user['id']]);
         } else {
             $stmt = $pdo->prepare(
-                "INSERT INTO users (full_name, email, google_id, avatar_url, email_verified) 
+                "INSERT INTO mimos_users (full_name, email, google_id, avatar_url, email_verified) 
                  VALUES (:name, :email, :gid, :avatar, 1)"
             );
             $stmt->execute([

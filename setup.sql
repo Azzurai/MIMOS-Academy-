@@ -4,7 +4,7 @@
 -- ============================================
 
 -- Users table
-CREATE TABLE IF NOT EXISTS `users` (
+CREATE TABLE IF NOT EXISTS `mimos_users` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `full_name` VARCHAR(100) NOT NULL,
     `email` VARCHAR(255) NOT NULL UNIQUE,
@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Login attempts table (for rate limiting / brute force protection)
-CREATE TABLE IF NOT EXISTS `login_attempts` (
+CREATE TABLE IF NOT EXISTS `mimos_login_attempts` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `ip_address` VARCHAR(45) NOT NULL,
     `email` VARCHAR(255) DEFAULT NULL,
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `login_attempts` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Sessions table (optional server-side session tracking)
-CREATE TABLE IF NOT EXISTS `active_sessions` (
+CREATE TABLE IF NOT EXISTS `mimos_active_sessions` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
     `user_id` INT NOT NULL,
     `session_token` VARCHAR(128) NOT NULL UNIQUE,
@@ -42,8 +42,9 @@ CREATE TABLE IF NOT EXISTS `active_sessions` (
     `user_agent` VARCHAR(500) DEFAULT NULL,
     `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     `expires_at` DATETIME NOT NULL,
-    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`user_id`) REFERENCES `mimos_users`(`id`) ON DELETE CASCADE,
     INDEX `idx_session_token` (`session_token`),
     INDEX `idx_user_id` (`user_id`),
     INDEX `idx_expires` (`expires_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
