@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MIMOS Academy Programs — Explore semiconductor engineering, AI, cybersecurity, and embedded systems courses designed for industry-ready professionals.">
+  <title>Programs — MIMOS Academy</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ========== NAVBAR ========== -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar__logo">
+        <img src="assets/images/logo.png" alt="MIMOS Academy Logo">
+      </a>
+      <ul class="navbar__links" id="navLinks">
+        <li><a href="index.html" class="navbar__link">Home</a></li>
+        <li><a href="about.html" class="navbar__link">About</a></li>
+        <li><a href="programs.html" class="navbar__link active">Programs</a></li>
+        <li><a href="#" class="navbar__link">Facilities</a></li>
+        <li><a href="#" class="navbar__link">News</a></li>
+        <li><a href="contact.html" class="navbar__link">Contact</a></li>
+      </ul>
+      <div class="navbar__actions">
+        <button class="navbar__search" aria-label="Search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <a href="contact.html" class="navbar__cta">
+          Register Now
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <button class="navbar__toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero hero--programs" id="hero" style="margin-top:var(--navbar-height);">
+    <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:var(--spacing-3xl);width:100%;">
+      <div class="hero__content" style="animation: fadeInUp 0.8s ease forwards;position:relative;">
+        <span class="hero__badge hero__badge--purple">Engineering Track</span>
+        <h1 class="hero__title hero__title--dark" style="font-size:var(--font-size-5xl);">Semiconductor<br>Engineering</h1>
+        <p class="hero__desc hero__desc--dark">Master the architecture of the modern world. From semiconductor-grade fabrication design to complex VLSI systems, our programs forge the next generation of silicon pioneers.</p>
+        <div class="btn-group">
+          <a href="#courses" class="btn btn--navy">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+            50+ Core Programs
+          </a>
+          <a href="#" class="btn btn--outline">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Industry Certified
+          </a>
+        </div>
+      </div>
+      <div style="width:400px;height:320px;flex-shrink:0;border-radius:var(--radius-lg);overflow:hidden;">
+        <div class="placeholder-img placeholder-img--dark" style="width:100%;height:100%;">
+          <span>Semiconductor / Chip Close-Up</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== COURSE LISTING ========== -->
+  <section class="section" id="courses">
+    <div class="container">
+      <!-- Filters -->
+      <div class="course-filters">
+        <div class="course-filters__tabs">
+          <button class="course-filters__tab active">All Items</button>
+          <button class="course-filters__tab">By Semester</button>
+          <button class="course-filters__tab">By Module</button>
+          <button class="course-filters__tab">Professional</button>
+        </div>
+        <div class="course-filters__search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Search programs...">
+        </div>
+      </div>
+
+      <!-- Course Grid -->
+      <div class="courses-grid">
+        <!-- Course 1 -->
+        <div class="course-card animate-on-scroll">
+          <div class="course-card__image">
+            <div class="placeholder-img" style="width:100%;height:100%;">
+              <span>VLSI Circuit Board</span>
+            </div>
+            <span class="course-card__badge course-card__badge--professional">Professional</span>
+          </div>
+          <div class="course-card__body">
+            <h3 class="course-card__title">Advanced VLSI Design</h3>
+            <p class="course-card__desc">Master VLSI architecture, semiconductor circuit design, and silicon fabrication with cutting-edge EDA tools and simulated chip design processes.</p>
+            <div class="course-card__meta">
+              <span class="course-card__meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                12 Weeks
+              </span>
+              <span class="course-card__meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                Blended Learning
+              </span>
+            </div>
+            <a href="program-detail.html" class="course-card__btn">
+              View Details
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Course 2 -->
+        <div class="course-card animate-on-scroll">
+          <div class="course-card__image">
+            <div class="placeholder-img placeholder-img--dark" style="width:100%;height:100%;">
+              <span>Microchip Close-Up</span>
+            </div>
+            <span class="course-card__badge course-card__badge--intermediate">Intermediate</span>
+          </div>
+          <div class="course-card__body">
+            <h3 class="course-card__title">Advanced VLSI Design</h3>
+            <p class="course-card__desc">Master VLSI architecture, semiconductor circuit design, and silicon fabrication with hands-on lab work on industry-standard equipment.</p>
+            <div class="course-card__meta">
+              <span class="course-card__meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                12 Weeks
+              </span>
+              <span class="course-card__meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                Blended Learning
+              </span>
+            </div>
+            <a href="program-detail.html" class="course-card__btn">
+              View Details
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Course 3 -->
+        <div class="course-card animate-on-scroll">
+          <div class="course-card__image">
+            <div class="placeholder-img" style="width:100%;height:100%;background:linear-gradient(135deg,#e0f5e8 0%,#bfebcf 40%,#99d8b0 100%);">
+              <span>Green PCB Board</span>
+            </div>
+            <span class="course-card__badge course-card__badge--foundation">Foundation</span>
+          </div>
+          <div class="course-card__body">
+            <h3 class="course-card__title">Advanced VLSI Design</h3>
+            <p class="course-card__desc">Master VLSI architecture, semiconductor circuit design, and silicon fabrication with comprehensive laboratory exercises.</p>
+            <div class="course-card__meta">
+              <span class="course-card__meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                12 Weeks
+              </span>
+              <span class="course-card__meta-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                Blended Learning
+              </span>
+            </div>
+            <a href="program-detail.html" class="course-card__btn">
+              View Details
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CAREER TRAJECTORIES ========== -->
+  <section class="section section--gray" id="career">
+    <div class="container">
+      <div class="section-header" style="text-align:left;margin-bottom:var(--spacing-2xl);">
+        <h2 class="section-title">Elevating Global <span>Career<br>Trajectories</span></h2>
+      </div>
+
+      <div class="career-section">
+        <div class="career-list">
+          <div class="career-item animate-on-scroll">
+            <div class="career-item__icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            </div>
+            <div>
+              <h3 class="career-item__title">Career Acceleration</h3>
+              <p class="career-item__desc">Accelerated skills development designed for fast career growth in high-demand technology sectors including semiconductor and AI fields.</p>
+            </div>
+          </div>
+          <div class="career-item animate-on-scroll">
+            <div class="career-item__icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <div>
+              <h3 class="career-item__title">MIMOS Accreditation</h3>
+              <p class="career-item__desc">Industry-recognized certifications backed by MIMOS Berhad, one of Malaysia's premier research organizations in applied technology.</p>
+            </div>
+          </div>
+          <div class="career-item animate-on-scroll">
+            <div class="career-item__icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </div>
+            <div>
+              <h3 class="career-item__title">Industry Ecosystem</h3>
+              <p class="career-item__desc">Direct connections to Malaysia's technology industry ecosystem with job placement support and collaborative research opportunities.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="career-stats">
+          <div class="career-stat-card animate-on-scroll">
+            <div class="career-stat-card__number">500+</div>
+            <div class="career-stat-card__label">Enrolled Students</div>
+          </div>
+          <div class="career-stat-card animate-on-scroll">
+            <div class="career-stat-card__number">$12B</div>
+            <div class="career-stat-card__label">Graduate Impact</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CTA BANNER ========== -->
+  <section class="cta-banner" id="cta">
+    <div class="container">
+      <h2 class="cta-banner__title animate-on-scroll">Ready to build your future in advanced technology?</h2>
+      <p class="cta-banner__desc animate-on-scroll">Explore industry-driven programs in semiconductor, AI, cybersecurity, and emerging technologies.</p>
+      <div class="btn-group animate-on-scroll">
+        <a href="programs.html" class="btn btn--primary btn--lg">Explore Programs</a>
+        <a href="contact.html" class="btn btn--outline-white btn--lg">Join Training</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div class="footer__brand">
+          <img src="assets/images/logo.png" alt="MIMOS Academy Logo">
+          <p>Empowering talent for Malaysia's high-tech industry by bridging education and industry for a smarter, tech-driven future.</p>
+          <div class="footer__social">
+            <a href="#" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg></a>
+            <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+            <a href="#" aria-label="TikTok"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1 0-5.78 2.92 2.92 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 3 15.57 6.33 6.33 0 0 0 9.37 22a6.33 6.33 0 0 0 6.33-6.33V9.18a8.16 8.16 0 0 0 3.89.98V6.69z"/></svg></a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer__col-title">Our Company</h4>
+          <div class="footer__links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="#">Facilities</a>
+            <a href="#">News</a>
+            <a href="contact.html">Contact</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer__col-title">Our Programs</h4>
+          <div class="footer__links">
+            <a href="programs.html">Semiconductor</a>
+            <a href="programs.html">AI & Data Science</a>
+            <a href="programs.html">Cybersecurity</a>
+            <a href="programs.html">Embedded Systems</a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer__col-title">Get in Touch</h4>
+          <div class="footer__contact-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            MIMOS Berhad, Bukit Jalil, KL
+          </div>
+          <div class="footer__contact-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            academy@mimos.my
+          </div>
+          <div class="footer__contact-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            04-40E25434
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        Copyright &copy; 2025 — MIMOS Academy
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
