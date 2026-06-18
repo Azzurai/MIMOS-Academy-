@@ -153,4 +153,91 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // --- Dynamic Navbar Auth Status ---
+  updateNavbarAuth();
+
+  function updateNavbarAuth() {
+    // Avoid running this on the login/register/auth pages themselves
+    if (document.querySelector('.auth-page')) return;
+
+    const navbarActions = document.querySelector('.navbar__actions');
+    if (!navbarActions) return;
+
+    fetch('auth/check-session.php')
+      .then(r => {
+        if (!r.ok) throw new Error('Network response was not ok');
+        return r.json();
+      })
+      .then(data => {
+        if (data.logged_in) {
+          const userName = data.user.name;
+          const userAvatar = data.user.avatar;
+          
+          let avatarHtml = '';
+          if (userAvatar) {
+            avatarHtml = `<img src="${userAvatar}" alt="${userName}" class="navbar__avatar">`;
+          } else {
+            const initials = userName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+            avatarHtml = `<div class="navbar__avatar-placeholder">${initials}</div>`;
+          }
+
+          navbarActions.innerHTML = `
+            <button class="navbar__search" aria-label="Search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </button>
+            <div class="navbar__user-menu">
+              <button class="navbar__user-btn" aria-label="User menu">
+                ${avatarHtml}
+                <span class="navbar__user-name">${userName.split(' ')[0]}</span>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+              </button>
+              <div class="navbar__dropdown">
+                <div class="navbar__dropdown-header">
+                  <strong>${userName}</strong>
+                  <span>${data.user.email}</span>
+                </div>
+                <hr>
+                <a href="auth/logout.php" class="navbar__dropdown-item navbar__dropdown-item--logout">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                  Sign Out
+                </a>
+              </div>
+            </div>
+          `;
+
+          const userBtn = navbarActions.querySelector('.navbar__user-btn');
+          const dropdown = navbarActions.querySelector('.navbar__dropdown');
+          if (userBtn && dropdown) {
+            userBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              dropdown.classList.toggle('show');
+            });
+            document.addEventListener('click', () => {
+              dropdown.classList.remove('show');
+            });
+          }
+        } else {
+          navbarActions.innerHTML = `
+            <button class="navbar__search" aria-label="Search">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            </button>
+            <a href="login.html" class="navbar__link-signin" style="font-size: var(--font-size-sm); font-weight: 600; color: var(--color-dark-text); margin-right: 15px; transition: color var(--transition-fast); display: inline-block;">Sign In</a>
+            <a href="register.html" class="navbar__cta">
+              Register Now
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          `;
+
+          const signInLink = navbarActions.querySelector('.navbar__link-signin');
+          if (signInLink) {
+            signInLink.addEventListener('mouseenter', () => signInLink.style.color = 'var(--color-primary)');
+            signInLink.addEventListener('mouseleave', () => signInLink.style.color = 'var(--color-dark-text)');
+          }
+        }
+      })
+      .catch(err => {
+        console.error('Session status fetch failed', err);
+      });
+  }
+
 });
