@@ -3,6 +3,8 @@
 -- Run this on your MySQL database via cPanel phpMyAdmin
 -- ============================================
 
+USE `mimosaca_micalprodb`;
+
 -- Users table
 CREATE TABLE IF NOT EXISTS `mimos_users` (
     `id` INT AUTO_INCREMENT PRIMARY KEY,
