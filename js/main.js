@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navbarActions = document.querySelector('.navbar__actions');
     if (!navbarActions) return;
 
-    fetch('auth/check-session.php')
+    fetch('auth.php?action=check-session')
       .then(r => {
         if (!r.ok) throw new Error('Network response was not ok');
         return r.json();
@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   <span>${data.user.email}</span>
                 </div>
                 <hr>
-                <a href="auth/logout.php" class="navbar__dropdown-item navbar__dropdown-item--logout">
+                <a href="auth.php?action=logout" class="navbar__dropdown-item navbar__dropdown-item--logout">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
                   Sign Out
                 </a>
@@ -221,8 +221,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <button class="navbar__search" aria-label="Search">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
             </button>
-            <a href="login.html" class="navbar__link-signin" style="font-size: var(--font-size-sm); font-weight: 600; color: var(--color-dark-text); margin-right: 15px; transition: color var(--transition-fast); display: inline-block;">Sign In</a>
-            <a href="register.html" class="navbar__cta">
+            <a href="auth.php" class="navbar__link-signin" style="font-size: var(--font-size-sm); font-weight: 600; color: var(--color-dark-text); margin-right: 15px; transition: color var(--transition-fast); display: inline-block;">Sign In</a>
+            <a href="auth.php?action=register" class="navbar__cta">
               Register Now
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
