@@ -72,7 +72,7 @@
 
   /* Layout */
   --container-max: 1200px;
-  --navbar-height: 72px;
+  --navbar-height: 90px;
 }
 
 /* --- Reset & Base --- */
@@ -214,7 +214,7 @@ button, input, textarea {
 }
 
 .navbar__logo img {
-  height: 52px;
+  height: 68px;
   width: auto;
 }
 
