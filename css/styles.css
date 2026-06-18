@@ -2031,3 +2031,181 @@ button, input, textarea {
   background: #fef2f2;
   color: #dc2626;
 }
+
+/* --- Active Devices Modal --- */
+.devices-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity var(--transition-base);
+  pointer-events: none;
+}
+.devices-modal-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.devices-modal {
+  background: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  width: 90%;
+  max-width: 500px;
+  overflow: hidden;
+  transform: translateY(20px);
+  transition: transform var(--transition-base);
+}
+.devices-modal-overlay.show .devices-modal {
+  transform: translateY(0);
+}
+.devices-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-lg) var(--spacing-xl);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-light-bg);
+}
+.devices-modal__header h3 {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-navy);
+}
+.devices-modal__close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--color-muted);
+  transition: color var(--transition-fast);
+}
+.devices-modal__close:hover {
+  color: var(--color-navy);
+}
+.devices-modal__body {
+  padding: var(--spacing-xl);
+}
+.devices-modal__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-muted);
+  margin-bottom: var(--spacing-xl);
+  line-height: 1.5;
+}
+.devices-modal__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: var(--spacing-xl);
+  padding-right: var(--spacing-xs);
+}
+.device-item {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  transition: border-color var(--transition-fast);
+}
+.device-item:hover {
+  border-color: var(--color-muted);
+}
+.device-item--current {
+  border-color: rgba(16, 185, 129, 0.4);
+  background: rgba(240, 253, 250, 0.5);
+}
+.device-item__icon {
+  margin-right: var(--spacing-md);
+  color: var(--color-navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-light-bg);
+}
+.device-item--current .device-item__icon {
+  color: #10b981;
+  background: #e6fcf5;
+}
+.device-item__details {
+  flex: 1;
+}
+.device-item__name {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-dark-text);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+.device-badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+.device-badge--current {
+  background: #e6fcf5;
+  color: #0ca678;
+  border: 1px solid rgba(12, 166, 120, 0.2);
+}
+.device-item__meta {
+  font-size: 11px;
+  color: var(--color-muted);
+  margin-top: 2px;
+}
+.device-logout-btn {
+  background: transparent;
+  border: 1px solid rgba(224, 49, 49, 0.3);
+  color: #e03131;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.device-logout-btn:hover {
+  background: #fff5f5;
+  border-color: #e03131;
+}
+.devices-logout-others-btn {
+  width: 100%;
+  padding: 12px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-navy);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+  margin-top: var(--spacing-md);
+}
+.devices-logout-others-btn:hover {
+  background: var(--color-light-bg);
+  border-color: var(--color-navy);
+}
+.navbar__dropdown-item--devices {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+

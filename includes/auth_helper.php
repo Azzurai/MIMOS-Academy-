@@ -53,6 +53,15 @@ function initSession() {
         session_start();
     }
     $_SESSION['_last_activity'] = time();
+
+    // Validate session in database if logged in
+    if (isset($_SESSION['user_id']) && !empty($_SESSION['user_id'])) {
+        if (!isLoggedIn()) {
+            session_unset();
+            session_destroy();
+            session_start();
+        }
+    }
 }
 
 // Automatically start session
@@ -80,7 +89,136 @@ function regenerateCSRFToken() {
 
 // --- Session Getters ---
 function isLoggedIn() {
-    return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
+    if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id']) || !isset($_SESSION['session_token'])) {
+        return false;
+    }
+    
+    static $is_valid = null;
+    if ($is_valid !== null) {
+        return $is_valid;
+    }
+    
+    try {
+        $pdo = getDBConnection();
+        $stmt = $pdo->prepare("SELECT 1 FROM mimos_active_sessions WHERE user_id = :uid AND session_token = :token AND expires_at > NOW() LIMIT 1");
+        $stmt->execute([
+            ':uid'   => $_SESSION['user_id'],
+            ':token' => $_SESSION['session_token']
+        ]);
+        $is_valid = (bool)$stmt->fetch();
+        
+        if ($is_valid) {
+            $new_expiry = date('Y-m-d H:i:s', time() + SESSION_LIFETIME);
+            $stmt = $pdo->prepare("UPDATE mimos_active_sessions SET expires_at = :expires WHERE session_token = :token");
+            $stmt->execute([':expires' => $new_expiry, ':token' => $_SESSION['session_token']]);
+        }
+    } catch (Exception $e) {
+        $is_valid = false;
+    }
+    
+    return $is_valid;
+}
+
+// --- Active Session Management ---
+function registerActiveSession($userId) {
+    $token = bin2hex(random_bytes(64));
+    $_SESSION['session_token'] = $token;
+    
+    try {
+        $pdo = getDBConnection();
+        
+        // Clean up expired sessions for this user first
+        $stmt = $pdo->prepare("DELETE FROM mimos_active_sessions WHERE user_id = :uid AND expires_at < NOW()");
+        $stmt->execute([':uid' => $userId]);
+        
+        // Insert new active session
+        $expiry = date('Y-m-d H:i:s', time() + SESSION_LIFETIME);
+        $stmt = $pdo->prepare("INSERT INTO mimos_active_sessions (user_id, session_token, ip_address, user_agent, expires_at) VALUES (:uid, :token, :ip, :ua, :expires)");
+        $stmt->execute([
+            ':uid'     => $userId,
+            ':token'   => $token,
+            ':ip'      => getClientIP(),
+            ':ua'      => $_SERVER['HTTP_USER_AGENT'] ?? null,
+            ':expires' => $expiry,
+        ]);
+    } catch (Exception $e) {
+        error_log('Failed to register active session: ' . $e->getMessage());
+    }
+    
+    return $token;
+}
+
+function revokeActiveSession($token) {
+    try {
+        $pdo = getDBConnection();
+        $stmt = $pdo->prepare("DELETE FROM mimos_active_sessions WHERE session_token = :token");
+        $stmt->execute([':token' => $token]);
+    } catch (Exception $e) {
+        error_log('Failed to revoke session: ' . $e->getMessage());
+    }
+}
+
+function revokeOtherSessions($userId, $currentToken) {
+    try {
+        $pdo = getDBConnection();
+        $stmt = $pdo->prepare("DELETE FROM mimos_active_sessions WHERE user_id = :uid AND session_token != :token");
+        $stmt->execute([
+            ':uid'   => $userId,
+            ':token' => $currentToken
+        ]);
+    } catch (Exception $e) {
+        error_log('Failed to revoke other sessions: ' . $e->getMessage());
+    }
+}
+
+function getActiveSessions($userId) {
+    try {
+        $pdo = getDBConnection();
+        $stmt = $pdo->prepare("SELECT id, session_token, ip_address, user_agent, created_at FROM mimos_active_sessions WHERE user_id = :uid AND expires_at > NOW() ORDER BY created_at DESC");
+        $stmt->execute([':uid' => $userId]);
+        return $stmt->fetchAll();
+    } catch (Exception $e) {
+        error_log('Failed to fetch active sessions: ' . $e->getMessage());
+        return [];
+    }
+}
+
+// --- User Agent Parser ---
+function parseUserAgent($userAgentString) {
+    if (empty($userAgentString)) {
+        return 'Unknown Device';
+    }
+
+    $os = 'Unknown OS';
+    $browser = 'Unknown Browser';
+
+    // Parse OS
+    if (preg_match('/windows|win32/i', $userAgentString)) {
+        $os = 'Windows';
+    } elseif (preg_match('/macintosh|mac os x/i', $userAgentString)) {
+        $os = 'macOS';
+    } elseif (preg_match('/iphone|ipad|ipod/i', $userAgentString)) {
+        $os = 'iOS';
+    } elseif (preg_match('/android/i', $userAgentString)) {
+        $os = 'Android';
+    } elseif (preg_match('/linux/i', $userAgentString)) {
+        $os = 'Linux';
+    }
+
+    // Parse Browser
+    if (preg_match('/chrome|crios/i', $userAgentString) && !preg_match('/edge|edg/i', $userAgentString) && !preg_match('/opr|opera/i', $userAgentString)) {
+        $browser = 'Chrome';
+    } elseif (preg_match('/safari/i', $userAgentString) && !preg_match('/chrome|crios/i', $userAgentString) && !preg_match('/android/i', $userAgentString)) {
+        $browser = 'Safari';
+    } elseif (preg_match('/firefox/i', $userAgentString)) {
+        $browser = 'Firefox';
+    } elseif (preg_match('/edge|edg/i', $userAgentString)) {
+        $browser = 'Edge';
+    } elseif (preg_match('/opr|opera/i', $userAgentString)) {
+        $browser = 'Opera';
+    }
+
+    return $browser . ' on ' . $os;
 }
 
 function getCurrentUser() {

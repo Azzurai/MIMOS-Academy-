@@ -63,6 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_avatar'] = $user['avatar_url'] ?? '';
         $_SESSION['_created']    = time();
 
+        registerActiveSession($user['id']);
+
         regenerateCSRFToken();
 
         if (mt_rand(1, 10) === 1) {
@@ -127,6 +129,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_name']   = $fullName;
             $_SESSION['user_email']  = $email;
             $_SESSION['user_avatar'] = '';
+
+            registerActiveSession($userId);
 
             regenerateCSRFToken();
 
@@ -244,6 +248,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'redirect' => 'auth.php',
         ]);
     }
+    elseif ($action === 'logout-device') {
+        if (!isLoggedIn()) {
+            jsonResponse(['success' => false, 'message' => 'Unauthorized.'], 401);
+        }
+        
+        $sessionToken = trim($input['session_token'] ?? '');
+        if (empty($sessionToken)) {
+            $sessionId = intval($input['session_id'] ?? 0);
+            if ($sessionId <= 0) {
+                jsonResponse(['success' => false, 'message' => 'Session ID or token is required.'], 400);
+            }
+            
+            $pdo = getDBConnection();
+            $stmt = $pdo->prepare("SELECT session_token FROM mimos_active_sessions WHERE id = :id AND user_id = :uid LIMIT 1");
+            $stmt->execute([':id' => $sessionId, ':uid' => $_SESSION['user_id']]);
+            $sess = $stmt->fetch();
+            if ($sess) {
+                $sessionToken = $sess['session_token'];
+            }
+        }
+        
+        if (empty($sessionToken)) {
+            jsonResponse(['success' => false, 'message' => 'Session not found.'], 404);
+        }
+        
+        revokeActiveSession($sessionToken);
+        
+        jsonResponse([
+            'success' => true, 
+            'message' => 'Device logged out successfully.'
+        ]);
+    }
+    elseif ($action === 'logout-others') {
+        if (!isLoggedIn()) {
+            jsonResponse(['success' => false, 'message' => 'Unauthorized.'], 401);
+        }
+        
+        revokeOtherSessions($_SESSION['user_id'], $_SESSION['session_token'] ?? '');
+        
+        jsonResponse([
+            'success' => true,
+            'message' => 'All other devices logged out successfully.'
+        ]);
+    }
     else {
         jsonResponse(['success' => false, 'message' => 'Invalid action.'], 400);
     }
@@ -255,6 +303,19 @@ if ($action === 'check-session') {
     header('X-Content-Type-Options: nosniff');
     if (isLoggedIn()) {
         $user = getCurrentUser();
+        
+        $sessionsList = [];
+        $rawSessions = getActiveSessions($user['id']);
+        foreach ($rawSessions as $sess) {
+            $sessionsList[] = [
+                'id' => $sess['id'],
+                'ip' => $sess['ip_address'],
+                'device' => parseUserAgent($sess['user_agent']),
+                'is_current' => ($sess['session_token'] === ($_SESSION['session_token'] ?? '')),
+                'created_at' => date('Y-m-d H:i', strtotime($sess['created_at'])),
+            ];
+        }
+        
         echo json_encode([
             'logged_in' => true,
             'user' => [
@@ -262,6 +323,7 @@ if ($action === 'check-session') {
                 'email'  => $user['email'],
                 'avatar' => $user['avatar'],
             ],
+            'sessions' => $sessionsList,
             'csrf_token' => generateCSRFToken(),
         ]);
     } else {
@@ -274,6 +336,9 @@ if ($action === 'check-session') {
 }
 
 if ($action === 'logout') {
+    if (isset($_SESSION['session_token'])) {
+        revokeActiveSession($_SESSION['session_token']);
+    }
     $_SESSION = [];
     if (ini_get('session.use_cookies')) {
         $params = session_get_cookie_params();
@@ -443,6 +508,8 @@ if ($action === 'google-callback') {
     $_SESSION['user_email']  = $user['email'];
     $_SESSION['user_avatar'] = $user['avatar_url'] ?? $googleAvatar;
     $_SESSION['_created']    = time();
+
+    registerActiveSession($user['id']);
 
     header('Location: index.html');
     exit;
