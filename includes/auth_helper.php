@@ -7,8 +7,19 @@
 
 require_once __DIR__ . '/../config.php';
 
+// --- Security Headers ---
+function sendSecurityHeaders() {
+    if (headers_sent()) return;
+    header('X-Content-Type-Options: nosniff');
+    header('X-Frame-Options: SAMEORIGIN');
+    header('X-XSS-Protection: 1; mode=block');
+    header('Referrer-Policy: strict-origin-when-cross-origin');
+    header("Content-Security-Policy: default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; frame-src 'self' https://accounts.google.com; connect-src 'self' https://accounts.google.com; img-src 'self' data: https:;");
+}
+
 // --- Session Security Settings & Initialization ---
 function initSession() {
+    sendSecurityHeaders();
     if (session_status() === PHP_SESSION_ACTIVE) {
         return;
     }
