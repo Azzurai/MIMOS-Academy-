@@ -30,6 +30,10 @@ define('GOOGLE_CLIENT_ID', '');
 define('GOOGLE_CLIENT_SECRET', '');
 define('GOOGLE_REDIRECT_URI', SITE_URL . '/auth/google-callback.php');
 
+// --- Cloudflare Turnstile (Anti-Bot CAPTCHA) ---
+define('TURNSTILE_SITE_KEY', '');       // Retrieve from Cloudflare Dashboard
+define('TURNSTILE_SECRET_KEY', '');     // Retrieve from Cloudflare Dashboard
+
 // --- Email (for forgot password — configure when ready) ---
 define('SMTP_HOST', '');
 define('SMTP_PORT', 587);

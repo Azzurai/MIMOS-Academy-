@@ -14,7 +14,8 @@ function sendSecurityHeaders() {
     header('X-Frame-Options: SAMEORIGIN');
     header('X-XSS-Protection: 1; mode=block');
     header('Referrer-Policy: strict-origin-when-cross-origin');
-    header("Content-Security-Policy: default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; frame-src 'self' https://accounts.google.com; connect-src 'self' https://accounts.google.com; img-src 'self' data: https:;");
+    header('Strict-Transport-Security: max-age=31536000; includeSubDomains; preload');
+    header("Content-Security-Policy: default-src 'self' https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com https://accounts.google.com https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://challenges.cloudflare.com; font-src 'self' data: https://fonts.gstatic.com; frame-src 'self' https://accounts.google.com https://challenges.cloudflare.com; connect-src 'self' https://accounts.google.com https://challenges.cloudflare.com; img-src 'self' data: https:;");
 }
 
 // --- Session Security Settings & Initialization ---
@@ -203,6 +204,37 @@ function cleanupLoginAttempts() {
     $cutoff = date('Y-m-d H:i:s', time() - (RATE_LIMIT_WINDOW * 2));
     $stmt = $pdo->prepare("DELETE FROM mimos_login_attempts WHERE attempted_at < :cutoff");
     $stmt->execute([':cutoff' => $cutoff]);
+}
+
+// --- Cloudflare Turnstile Verification ---
+function verifyTurnstile($token) {
+    if (!defined('TURNSTILE_SECRET_KEY') || empty(TURNSTILE_SECRET_KEY)) {
+        return true; // Skip verification if not configured
+    }
+    if (empty($token)) {
+        return false;
+    }
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, 'https://challenges.cloudflare.com/turnstile/v0/siteverify');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query([
+        'secret' => TURNSTILE_SECRET_KEY,
+        'response' => $token,
+        'remoteip' => getClientIP()
+    ]));
+    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+    
+    $response = curl_exec($ch);
+    curl_close($ch);
+    
+    if ($response === false) {
+        return false;
+    }
+    
+    $data = json_decode($response, true);
+    return !empty($data['success']);
 }
 
 // --- HTTP Response Helpers ---

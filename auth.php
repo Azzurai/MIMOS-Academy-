@@ -25,8 +25,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email    = strtolower(trim($input['email'] ?? ''));
         $password = $input['password'] ?? '';
 
+        $turnstileToken = $input['cf-turnstile-response'] ?? '';
+
         if (empty($email) || empty($password)) {
             jsonResponse(['success' => false, 'message' => 'Email and password are required.'], 400);
+        }
+        if (!verifyTurnstile($turnstileToken)) {
+            jsonResponse(['success' => false, 'message' => 'Security check failed. Please refresh and try again.'], 400);
         }
         if (!isValidEmail($email)) {
             jsonResponse(['success' => false, 'message' => 'Please enter a valid email address.'], 400);
@@ -76,8 +81,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password        = $input['password'] ?? '';
         $confirmPassword = $input['confirm_password'] ?? '';
 
+        $turnstileToken  = $input['cf-turnstile-response'] ?? '';
+
         if (empty($fullName) || empty($email) || empty($password) || empty($confirmPassword)) {
             jsonResponse(['success' => false, 'message' => 'All fields are required.'], 400);
+        }
+        if (!verifyTurnstile($turnstileToken)) {
+            jsonResponse(['success' => false, 'message' => 'Security check failed. Please refresh and try again.'], 400);
         }
         if (strlen($fullName) < 2 || strlen($fullName) > 100) {
             jsonResponse(['success' => false, 'message' => 'Full name must be between 2 and 100 characters.'], 400);
@@ -136,7 +146,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         $email = strtolower(trim($input['email'] ?? ''));
-        if (empty($email) || !isValidEmail($email)) {
+        $turnstileToken = $input['cf-turnstile-response'] ?? '';
+
+        if (empty($email)) {
+            jsonResponse(['success' => false, 'message' => 'Email address is required.'], 400);
+        }
+        if (!verifyTurnstile($turnstileToken)) {
+            jsonResponse(['success' => false, 'message' => 'Security check failed. Please refresh and try again.'], 400);
+        }
+        if (!isValidEmail($email)) {
             jsonResponse(['success' => false, 'message' => 'Please enter a valid email address.'], 400);
         }
 
@@ -449,6 +467,9 @@ if ($action === 'register'):
   <meta name="description" content="Register for MIMOS Academy — Create your account and start your journey.">
   <title>Register — MIMOS Academy</title>
   <link rel="stylesheet" href="css/styles.css">
+  <?php if (defined('TURNSTILE_SITE_KEY') && !empty(TURNSTILE_SITE_KEY)): ?>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <?php endif; ?>
   <style>
     .auth-page { min-height: 100vh; display: flex; margin-top: var(--navbar-height); }
     .auth-left { flex: 1; display: flex; align-items: center; justify-content: center; padding: var(--spacing-3xl); }
@@ -570,6 +591,12 @@ if ($action === 'register'):
             <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
           </div>
 
+          <?php if (defined('TURNSTILE_SITE_KEY') && !empty(TURNSTILE_SITE_KEY)): ?>
+          <div class="form-group">
+            <div class="cf-turnstile" data-sitekey="<?php echo htmlspecialchars(TURNSTILE_SITE_KEY); ?>" data-theme="light"></div>
+          </div>
+          <?php endif; ?>
+
           <button type="submit" class="form-submit" id="submitBtn">
             Create Account
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -676,6 +703,7 @@ if ($action === 'register'):
             password,
             confirm_password: confirmPassword,
             csrf_token: csrfToken,
+            'cf-turnstile-response': document.querySelector('[name="cf-turnstile-response"]')?.value || '',
           }),
         });
 
@@ -688,11 +716,13 @@ if ($action === 'register'):
           }, 800);
         } else {
           showAlert('error', data.message);
+          if (window.turnstile) turnstile.reset();
           submitBtn.disabled = false;
           submitBtn.innerHTML = 'Create Account <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
         }
       } catch (err) {
         showAlert('error', 'A network error occurred. Please try again.');
+        if (window.turnstile) turnstile.reset();
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Create Account <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
       }
@@ -710,6 +740,9 @@ if ($action === 'register'):
   <meta name="description" content="Forgot Password — MIMOS Academy. Reset your account password.">
   <title>Forgot Password — MIMOS Academy</title>
   <link rel="stylesheet" href="css/styles.css">
+  <?php if (defined('TURNSTILE_SITE_KEY') && !empty(TURNSTILE_SITE_KEY)): ?>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <?php endif; ?>
   <style>
     .auth-page { min-height: 100vh; display: flex; margin-top: var(--navbar-height); }
     .auth-left { flex: 1; display: flex; align-items: center; justify-content: center; padding: var(--spacing-3xl); }
@@ -789,6 +822,12 @@ if ($action === 'register'):
             <input type="email" id="email" name="email" placeholder="Enter your email" autocomplete="email" required>
           </div>
 
+          <?php if (defined('TURNSTILE_SITE_KEY') && !empty(TURNSTILE_SITE_KEY)): ?>
+          <div class="form-group">
+            <div class="cf-turnstile" data-sitekey="<?php echo htmlspecialchars(TURNSTILE_SITE_KEY); ?>" data-theme="light"></div>
+          </div>
+          <?php endif; ?>
+
           <button type="submit" class="form-submit" id="submitBtn">
             Send Reset Link
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -833,7 +872,11 @@ if ($action === 'register'):
         const response = await fetch('auth.php?action=forgot', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, csrf_token: csrfToken }),
+          body: JSON.stringify({ 
+            email, 
+            csrf_token: csrfToken,
+            'cf-turnstile-response': document.querySelector('[name="cf-turnstile-response"]')?.value || '',
+          }),
         });
 
         const data = await response.json();
@@ -848,12 +891,14 @@ if ($action === 'register'):
           }
         } else {
           showAlert('error', data.message);
+          if (window.turnstile) turnstile.reset();
         }
 
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Send Reset Link <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
       } catch (err) {
         showAlert('error', 'A network error occurred. Please try again.');
+        if (window.turnstile) turnstile.reset();
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Send Reset Link <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
       }
@@ -1082,6 +1127,9 @@ if ($action === 'register'):
   <meta name="description" content="Login to MIMOS Academy — Access your programs, certifications, and learning dashboard.">
   <title>Login — MIMOS Academy</title>
   <link rel="stylesheet" href="css/styles.css">
+  <?php if (defined('TURNSTILE_SITE_KEY') && !empty(TURNSTILE_SITE_KEY)): ?>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <?php endif; ?>
   <style>
     .auth-page { min-height: 100vh; display: flex; margin-top: var(--navbar-height); }
     .auth-left { flex: 1; display: flex; align-items: center; justify-content: center; padding: var(--spacing-3xl); }
@@ -1192,6 +1240,12 @@ if ($action === 'register'):
             <a href="auth.php?action=forgot">Forgot password?</a>
           </div>
 
+          <?php if (defined('TURNSTILE_SITE_KEY') && !empty(TURNSTILE_SITE_KEY)): ?>
+          <div class="form-group">
+            <div class="cf-turnstile" data-sitekey="<?php echo htmlspecialchars(TURNSTILE_SITE_KEY); ?>" data-theme="light"></div>
+          </div>
+          <?php endif; ?>
+
           <button type="submit" class="form-submit" id="submitBtn">
             Sign In
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -1259,6 +1313,7 @@ if ($action === 'register'):
             email,
             password,
             csrf_token: csrfToken,
+            'cf-turnstile-response': document.querySelector('[name="cf-turnstile-response"]')?.value || '',
           }),
         });
 
@@ -1271,11 +1326,13 @@ if ($action === 'register'):
           }, 800);
         } else {
           showAlert('error', data.message);
+          if (window.turnstile) turnstile.reset();
           submitBtn.disabled = false;
           submitBtn.innerHTML = 'Sign In <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
         }
       } catch (err) {
         showAlert('error', 'A network error occurred. Please try again.');
+        if (window.turnstile) turnstile.reset();
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Sign In <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
       }
